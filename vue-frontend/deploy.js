@@ -1,6 +1,6 @@
 const {Storage} = require('@google-cloud/storage');
 
-const fileName = 'app';
+const fileName = 'recommend';
 const bucketName = 'webpack-frontend';
 const storage = new Storage({
   keyFilename: './google-secret.json',
