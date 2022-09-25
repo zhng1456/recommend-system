@@ -18,3 +18,4 @@ package-lock.json
 dist
 
 google-secret.json
+firebase-adminsdk-key.json
