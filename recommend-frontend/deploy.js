@@ -1,15 +1,19 @@
 const {Storage} = require('@google-cloud/storage');
 
-const fileName = 'recommend';
+const fileName = 'app';
 const bucketName = 'webpack-frontend';
 const storage = new Storage({
     keyFilename: './google-secret.json',
     projectId: 'crested-polygon-362000'
 });
 const projectBucket = storage.bucket(bucketName);
+const prefix = 'recommend';
 
 const uploadFiles = target => {
-    return projectBucket.upload(`./dist/static/${target}`);
+    const options = {
+        destination: `${prefix}-${target}`
+    };
+    return projectBucket.upload(`./dist/${target}`, options);
 };
 
 const deploy = (fn, arr = []) => {
@@ -23,4 +27,4 @@ const deploy = (fn, arr = []) => {
     }).catch(console.log);
 };
 
-deploy(uploadFiles, [`js/${fileName}.js`, `css/${fileName}.css`])
+deploy(uploadFiles, [`${fileName}.js`, `${fileName}.css`, 'chunk-vendors.js'])
