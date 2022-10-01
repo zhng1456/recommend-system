@@ -1,4 +1,5 @@
 import firebase from 'firebase/compat/app';
+import Cookies from "js-cookie";
 
 const config = {
   apiKey: "AIzaSyDB-UQIK0q69TrtxDkIrtkuKqFSmrYQAZw",
@@ -12,18 +13,13 @@ const config = {
 
 firebase.initializeApp(config);
 
-export function firebaseListener(func) {
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      console.log("User log in success", user);
-      func(true, user)
-    } else {
-      // console.log("User log in failed", user);
-      func(false)
-    }
-  }, function(error) {
-    console.log(error)
-  });
-}
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    user.getIdToken().then(idToken => Cookies.set('access-token', idToken, { expires: 2 }));
+  }
+}, function(error) {
+  console.log(error)
+});
 
 export const firebaseAuth = firebase.auth;

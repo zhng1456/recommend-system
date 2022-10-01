@@ -1,5 +1,8 @@
 <template>
-  <div id="firebaseui-auth-container">
+  <div>
+    <div id='firebaseui-auth-container' v-if='!isLogin'>
+    </div>
+    <span v-else>You already logged in</span>
   </div>
 </template>
 
@@ -10,23 +13,22 @@ import 'firebase/compat/firestore';
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 import { firebaseAuth } from "@/conf/firebaseConfig";
+import { Common } from "@/utils";
+import Cookies from "js-cookie";
+
 export default {
+  computed: {
+    isLogin() {
+      return Common.validString(Cookies.get('access-token'));
+    }
+  },
   mounted() {
     const firebaseConfigUI = {
       signInSuccessUrl: 'http://localhost:8080',
       signInOptions: [
-        // Leave the lines as is for the providers you want to offer your users.
-        // These need to be independently enabled through the web console.
-        firebaseAuth.GoogleAuthProvider.PROVIDER_ID,
-        firebaseAuth.FacebookAuthProvider.PROVIDER_ID,
-        firebaseAuth.TwitterAuthProvider.PROVIDER_ID,
         firebaseAuth.GithubAuthProvider.PROVIDER_ID,
         firebaseAuth.EmailAuthProvider.PROVIDER_ID,
-        firebaseAuth.PhoneAuthProvider.PROVIDER_ID
       ],
-      // tosUrl and privacyPolicyUrl accept either url string or a callback
-      // function.
-      // Terms of service url/callback.
       tosUrl: '<your-tos-url>',
       // Privacy policy url/callback.
       privacyPolicyUrl: function () {
