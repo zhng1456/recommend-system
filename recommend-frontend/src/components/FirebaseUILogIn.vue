@@ -2,7 +2,10 @@
   <div>
     <div id='firebaseui-auth-container' v-if='!isLogin'>
     </div>
-    <span v-else>You already logged in</span>
+    <div v-else>
+      <span>You already logged in</span>
+      <button @click='handleSignOut'>SignOut</button>
+    </div>
   </div>
 </template>
 
@@ -17,12 +20,15 @@ import { Common } from "@/utils";
 import Cookies from "js-cookie";
 
 export default {
-  computed: {
-    isLogin() {
-      return Common.validString(Cookies.get('access-token'));
+  data() {
+    return {
+      isLogin: Common.validString(Cookies.get('access-token'))
     }
   },
   mounted() {
+    if (Common.validString(Cookies.get('access-token'))) {
+      return;
+    }
     const firebaseConfigUI = {
       signInSuccessUrl: 'http://localhost:8080',
       signInOptions: [
@@ -37,6 +43,19 @@ export default {
     };
     const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
     ui.start('#firebaseui-auth-container', firebaseConfigUI);
+  },
+  methods: {
+    handleSignOut() {
+      firebaseAuth().signOut().then(() => {
+        console.log('signOut success');
+        Cookies.remove('access-token');
+        Cookies.remove('urlBeforeSso');
+        window.location.reload();
+      }).catch((error) => {
+        console.log(error);
+      });
+
+    }
   }
 }
 </script>
